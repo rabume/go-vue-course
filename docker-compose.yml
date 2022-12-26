@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
+    ports:
+      - "8081:8081"
     restart: unless-stopped
 
   vue-frontend:
