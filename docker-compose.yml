@@ -3,6 +3,7 @@ version: '3'
 services:
 
   go-app:
+    container_name: go-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,6 +14,7 @@ services:
     restart: unless-stopped
 
   vue-frontend:
+    container_name: vue-frontend
     image: node:latest
     working_dir: /app
     volumes:
