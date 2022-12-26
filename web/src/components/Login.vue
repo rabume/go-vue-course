@@ -59,7 +59,7 @@ export default {
             "body": JSON.stringify(payload),
         }
 
-        fetch("http://go-app:8081/users/login", requestOptions)
+        fetch("http://localhost:8081/users/login", requestOptions)
         .then((response) => response.json())
         .then((data) => {
             if(data.error){
