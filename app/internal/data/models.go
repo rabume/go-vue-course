@@ -187,7 +187,7 @@ func (u *User) Insert(user User) (int, error) {
 
 	var newID int
 
-	stmt := `INSERT INTO users (email, first_name, last_name, password, created_at, upadated_at
+	stmt := `INSERT INTO users (email, first_name, last_name, password, created_at, upadated_at)
 		VALUES ($1, $2, $3, $4, $5, $6) returning id
 	`
 
@@ -365,4 +365,52 @@ func (t *Token) ValidateToken(r *http.Request) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (t *Token) Insert(token Token, u User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	// delete any existing tokens
+	stmt := `DELETE FROM tokens WHERE user_id = $1`
+	_, err := db.ExecContext(ctx, stmt, token.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	token.Email = u.Email
+
+	stmt = `INSERT INTO tokens (user_id, email, token, token_hash, created_at, updated_at, expiry)
+			VALUES ($1, $2, $3, $4, $5, $6)`
+
+	_, err = db.ExecContext(ctx, stmt,
+		token.UserID,
+		token.Email,
+		token.Token,
+		token.TokenHash,
+		time.Now(),
+		time.Now(),
+		token.Expiry,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *Token) DeleteByToken(plainText string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	stmt := `DELETE FROM tokens WHERE token = $1`
+
+	_, err := db.ExecContext(ctx, stmt, plainText)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
