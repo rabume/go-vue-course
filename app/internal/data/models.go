@@ -130,10 +130,10 @@ func (u *User) Update() error {
 	defer cancel()
 
 	stmt := `UPDATE users SET
-		email = $1
-		first_name = $2
-		last_name = $3
-		updated_at = $4
+		email = $1,
+		first_name = $2,
+		last_name = $3,
+		updated_at = $4,
 		WHERE id = $5
 	`
 
