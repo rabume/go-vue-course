@@ -43,14 +43,14 @@ type User struct {
 	Token     Token     `json:"token"`
 }
 
+// GetAll returns a slice of all users, sorted by last name
 func (u *User) GetAll() ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT * FROM users ORDER BY last_name`
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users order by last_name`
 
 	rows, err := db.QueryContext(ctx, query)
-
 	if err != nil {
 		return nil, err
 	}
@@ -79,14 +79,14 @@ func (u *User) GetAll() ([]*User, error) {
 	return users, nil
 }
 
+// GetByEmail returns one user by email
 func (u *User) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT * FROM user WHERE email = $1`
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where email = $1`
 
 	var user User
-
 	row := db.QueryRowContext(ctx, query, email)
 
 	err := row.Scan(
@@ -106,14 +106,14 @@ func (u *User) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
+// GetOne returns one user by id
 func (u *User) GetOne(id int) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT * FROM user WHERE id = $1`
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where id = $1`
 
 	var user User
-
 	row := db.QueryRowContext(ctx, query, id)
 
 	err := row.Scan(
@@ -255,15 +255,18 @@ type Token struct {
 	Expiry    time.Time `json:"expiry"`
 }
 
+// GetByToken takes a plain text token string, and looks up the full token from
+// the database. It returns a pointer to the Token model.
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT * FROM tokens WHERE token = $1`
+	query := `select id, user_id, email, token, token_hash, created_at, updated_at, expiry
+			from tokens where token = $1`
 
 	var token Token
-	row := db.QueryRowContext(ctx, query, plainText)
 
+	row := db.QueryRowContext(ctx, query, plainText)
 	err := row.Scan(
 		&token.ID,
 		&token.UserID,
@@ -282,14 +285,15 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	return &token, nil
 }
 
+// GetUserForToken takes a token parameter, and uses the UserID field from that parameter
+// to look a user up by id. It returns a pointer to the user model.
 func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT * FROM user WHERE id = $1`
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where id = $1`
 
 	var user User
-
 	row := db.QueryRowContext(ctx, query, token.UserID)
 
 	err := row.Scan(
