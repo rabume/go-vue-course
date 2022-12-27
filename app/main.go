@@ -27,12 +27,11 @@ func main() {
 	errorLog := log.New(os.Stdout, "Error\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	dsn := os.Getenv("DSN")
-
 	db, err := driver.ConnectPostgres(dsn)
-
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.SQL.Close()
 
 	app := &application{
 		config:   cfg,
