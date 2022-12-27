@@ -187,7 +187,7 @@ func (u *User) Insert(user User) (int, error) {
 
 	var newID int
 
-	stmt := `INSERT INTO users (email, first_name, last_name, password, created_at, upadated_at)
+	stmt := `INSERT INTO users (email, first_name, last_name, password, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6) returning id
 	`
 
