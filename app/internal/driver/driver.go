@@ -21,7 +21,7 @@ const maxIdledbConn = 5
 const maxDbLifeTime = 5 * time.Minute
 
 func ConnectPostgres(dsn string) (*DB, error) {
-	d, err := sql.Open("pkx", dsn)
+	d, err := sql.Open("pgx", dsn)
 
 	if err != nil {
 		return nil, err
