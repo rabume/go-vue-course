@@ -7,6 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - DSN=host=postgres port=5432 user=postgres password=password dbname=vueapi sslmode=disable timezone=UTC connect_timeout=5
     volumes:
       - ./app:/app
     ports:
