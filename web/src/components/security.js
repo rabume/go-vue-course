@@ -23,3 +23,5 @@ let Security = {
         }
     }
 }
+
+export default Security;
