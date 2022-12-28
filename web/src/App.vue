@@ -46,29 +46,6 @@ export default {
       }
     }
   },
-  mounted() {
-    const payload = {
-      foo: "bar",
-    }
-
-    const headers = new Headers();
-    headers.append("Content-Type", "application/jsonn");
-    headers.append("Authorization", "Bearer " + store.token)
-
-    const requestOptions = {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: headers,
-    }
-
-    fetch(process.env.VUE_APP_API_URL + "/admin/foo", requestOptions)
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data); 
-    })
-
-  }
-
 }
 </script>
 
