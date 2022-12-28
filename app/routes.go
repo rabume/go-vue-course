@@ -25,10 +25,12 @@ func (app *application) routes() http.Handler {
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
 
+	// Protected routes
 	mux.Route("/admin", func(mux chi.Router) {
 		mux.Use(app.AuthTokenMiddleware)
 
 		mux.Post("/users", app.AllUsers)
+		mux.Post("/users/save", app.EditUser)
 	})
 
 	mux.Get("/users/add", func(w http.ResponseWriter, r *http.Request) {
