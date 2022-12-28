@@ -334,7 +334,7 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 	return token, nil
 }
 
-func (t *Token) ValidateToken(r *http.Request) (*User, error) {
+func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	authorizationHeader := r.Header.Get("Authorization")
 
 	if authorizationHeader == "" {
