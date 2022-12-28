@@ -3,6 +3,7 @@ package main
 import (
 	"go-vue-course/internal/data"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -59,6 +60,60 @@ func (app *application) routes() http.Handler {
 		newUser, _ := app.models.User.GetOne(id)
 
 		app.writeJSON(w, http.StatusOK, newUser)
+	})
+
+	mux.Get("/test-generate-token", func(w http.ResponseWriter, r *http.Request) {
+		token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		token.Email = "test@test.dev"
+		token.CreatedAt = time.Now()
+		token.UpdatedAt = time.Now()
+
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+
+		app.writeJSON(w, http.StatusOK, payload)
+	})
+
+	mux.Get("/test-save-token", func(w http.ResponseWriter, r *http.Request) {
+		token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		user, err := app.models.User.GetOne(1)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		token.UserID = user.ID
+		token.CreatedAt = time.Now()
+		token.UpdatedAt = time.Now()
+
+		err = token.Insert(*token, *user)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+
+		app.writeJSON(w, http.StatusOK, payload)
 	})
 
 	return mux
