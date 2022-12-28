@@ -61,7 +61,7 @@ export default {
       headers: headers,
     }
 
-    fetch("http://localhost:8081/admin/foo", requestOptions)
+    fetch(process.env.VUE_APP_API_URL + "/admin/foo", requestOptions)
     .then((response) => response.json())
     .then((data) => {
       console.log(data); 
