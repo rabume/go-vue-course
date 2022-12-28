@@ -12,4 +12,6 @@ CREATE TABLE
 ALTER TABLE
   public.users
 ADD
-  CONSTRAINT users_pkey PRIMARY KEY (id)
+  CONSTRAINT users_pkey PRIMARY KEY (id);
+
+CREATE UNIQUE INDEX "users_index_2" on public.users("email" ASC);
