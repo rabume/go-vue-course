@@ -386,7 +386,7 @@ func (t *Token) Insert(token Token, u User) error {
 	token.Email = u.Email
 
 	stmt = `INSERT INTO tokens (user_id, email, token, token_hash, created_at, updated_at, expiry)
-			VALUES ($1, $2, $3, $4, $5, $6)`
+			VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
 	_, err = db.ExecContext(ctx, stmt,
 		token.UserID,
